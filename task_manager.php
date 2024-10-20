@@ -22,12 +22,14 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Manager</title>
+    <title>TaskManager</title>
+    <link rel="stylesheet" href="Style.css"> 
 </head>
 <body>
     <h1>Mis Tareas</h1>
-    <a href="add_task.php">Agregar Nueva Tarea</a>
+    <a href="add_task.php">Agregar Nueva Tarea</a> <!-- Enlace para agregar una nueva tarea -->
     <a href="logout.php">Cerrar Sesión</a> <!-- Enlace de cerrar sesión -->
+    
     <table>
         <thead>
             <tr>
@@ -35,6 +37,7 @@ $result = $stmt->get_result();
                 <th>Descripción</th>
                 <th>Estado</th>
                 <th>Modificar Estado</th>
+                <th>Acciones</th> <!-- Nueva columna para editar y eliminar -->
             </tr>
         </thead>
         <tbody>
@@ -42,8 +45,20 @@ $result = $stmt->get_result();
                 <tr>
                     <td><?php echo htmlspecialchars($task['titulo']); ?></td>
                     <td><?php echo htmlspecialchars($task['descripcion']); ?></td>
-                    <td><?php echo $task['estado'] == 1 ? 'Completada' : 'Pendiente'; ?></td>
                     <td>
+                        <?php
+                        // Mostrar el estado de la tarea de manera legible
+                        if ($task['estado'] == 0) {
+                            echo 'Por Hacer';
+                        } elseif ($task['estado'] == 1) {
+                            echo 'En Progreso';
+                        } else {
+                            echo 'Terminada';
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <!-- Formulario para modificar el estado de la tarea -->
                         <form action="update_task.php" method="post">
                             <input type="hidden" name="id" value="<?php echo $task['id']; ?>">
                             <select name="estado">
@@ -53,6 +68,11 @@ $result = $stmt->get_result();
                             </select>
                             <input type="submit" value="Actualizar">
                         </form>
+                    </td>
+                    <td>
+                        <!-- Botones para editar y eliminar -->
+                        <a href="edit_task.php?id=<?php echo $task['id']; ?>">Editar</a> | 
+                        <a href="delete_task.php?id=<?php echo $task['id']; ?>" onclick="return confirm('¿Estás seguro de eliminar esta tarea?');">Eliminar</a>
                     </td>
                 </tr>
             <?php endwhile; ?>
